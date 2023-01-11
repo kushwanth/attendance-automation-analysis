@@ -53,9 +53,10 @@ def getStudentAttd(db,data):
 
 @router.post("/checkattendance", tags=["student"])
 async def checkstudentattendance(data: schemas.Student, db: Session = Depends(get_db), token: HTTPAuthorizationCredentials = Security(auth_scheme)):
-    if token.credentials==os.environ["CHATRAH_KEY"]:
+    try:
+        token.credentials==os.environ["CHATRAH_KEY"]
         return getStudentAttd(db,data)
-    else:
+    except:
         teacher_name = decode_token(token.credentials,'access_token')
         authorized = db.query(User).filter(User.name==teacher_name).first()
         if authorized is None:
